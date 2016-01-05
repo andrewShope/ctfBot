@@ -38,8 +38,8 @@ def say(contents, socket):
 
 def messageHandler(message, players, socket):
 	if message.contents == "!a" or message.contents == "!add":
-		playerList = addPlayer(message, players, socket)
-		return playerList
+		players = addPlayer(message, players, socket)
+		return players
 
 	if message.contents == "!r" or message.contents == "!remove":
 		return removePlayer(message, players, socket)
@@ -63,10 +63,6 @@ def messageHandler(message, players, socket):
 					   "Type !r or !remove to remove yourself from a game. "
  					   "Type !w or !who to see who is currently added.")
 		query(message.userName, helpMessage, socket)
-		return players
-
-	if message.contents == "HEY":
-		updateTopic("3", socket)
 		return players
 
 def addPlayer(message, playerList, socket):
@@ -178,6 +174,8 @@ while True:
   if ircmsg.split(" ")[1] == "PRIVMSG":
   	print("It is a PRIVMSG")
   	msgObject = Message(ircmsg)
+  	print(msgObject.userName)
+  	print(msgObject.contents)
   	playerList = messageHandler(msgObject, playerList, ircsock)
 
   ## If it's a parting message, make sure the user that left wasn't
@@ -186,9 +184,6 @@ while True:
   	if getUser(ircmsg) in playerList:
   		playerList.remove(getUser(ircmsg))
   		updateTopic(str(len(playerList)), ircsock)
-
-  if ircmsg.find(":Hello "+ botnick.decode()) != -1: 
-  	hello(ircsock)
 
   if ircmsg.find("PING :") != -1 or ircmsg.find("PONG") != -1: 
     ping(getID(ircmsg))
