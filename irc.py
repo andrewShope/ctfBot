@@ -65,6 +65,9 @@ def messageHandler(message, players, socket):
 		query(message.userName, helpMessage, socket)
 		return players
 
+	else:
+		return players
+
 def addPlayer(message, playerList, socket):
 	print(playerList)
 	print("IN ADDED")
