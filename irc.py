@@ -175,7 +175,6 @@ while True:
   ## This function will handle all of the logic of determining what 
   ## to do with each message
   if ircmsg.split(" ")[1] == "PRIVMSG":
-  	print("It is a PRIVMSG")
   	msgObject = Message(ircmsg)
   	print(msgObject.userName)
   	print(msgObject.contents)
@@ -183,7 +182,7 @@ while True:
 
   ## If it's a parting message, make sure the user that left wasn't
   ## in our queue to play
-  if ircmsg.split(" ")[1] == "PART":
+  if ircmsg.split(" ")[1] == "PART" or ircmsg.split(" ")[1] == "QUIT":
   	if getUser(ircmsg) in playerList:
   		playerList.remove(getUser(ircmsg))
   		updateTopic(str(len(playerList)), ircsock)
