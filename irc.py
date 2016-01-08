@@ -6,6 +6,7 @@ channel = "#nactftesting".encode()
 botnick = "[nactf]blehblah".encode()
 playerList = []
 lastGameTime = None
+promoteFlag = 0
 
 class Message(object):
 	def __init__(self, msgText):
@@ -101,7 +102,9 @@ def messageHandler(message, players, socket):
 	if message.contents == "!h" or message.contents == "!help":
 		helpMessage = ("Type !a or !add to add yourself to a game. "
 					   "Type !r or !remove to remove yourself from a game. "
- 					   "Type !w or !who to see who is currently added.")
+ 					   "Type !w or !who to see who is currently added."
+ 					   "Type !l or !lastgame to see when the last game was played."
+ 					   "Type !p or !promote to query all players to add up.")
 		query(message.userName, helpMessage, socket)
 		return players
 
@@ -112,8 +115,10 @@ def messageHandler(message, players, socket):
 		else:
 			say("No games since the last time the bot restarted.", socket)
 		return players
-	if message.contents == "HEY":
-		socket.send(b"NAMES #nactftesting\r\n")
+	if message.contents == "!p" or message.contents == "!promote":
+		socket.send(b"NAMES "+ channel + b"\r\n")
+		global promoteFlag
+		promoteFlag = 1
 		return players
 	else:
 		return players
@@ -162,13 +167,28 @@ def getUser(message):
 
 def query(userName, contents, socket):
 	socket.send(b"PRIVMSG " + userName.encode() + b" :" + 
-				contents.encode() + b"\n")
+				contents.encode() + b"\r\n")
 
 def updateTopic(numPlayers, socket):
 	socket.send(b"TOPIC " + channel + b" :\x02\x0304[\x0312CTF \x03\x02" +
 		b"[\x02\x0303" + numPlayers.encode() + b"\x03\x02/\x03038\x03]" +
 		b"\x02\x0304] [\x03\x02Welcome to #nactf.ql - Type !h for a list of " +
-		b"commands.\x0304\x02]\x02\x03\n")
+		b"commands - 1/8/16: Added !lastgame and !promote - working on adding ratings!\x0304\x02]\x02\x03\n")
+
+def promoteGame(message, socket):
+	outgoingMessage = "Add up! We need " + str(8-len(playerList)) + " more player(s)!"
+	names = message.split(":")[2]
+	namesList = names.split(" ")
+	for name in namesList:
+		name = name.strip('\n\r')
+		if name[0] == "@":
+			name = name[1:]
+		if name == "Q" or name == botnick.decode():
+			pass
+		else:
+			query(name, outgoingMessage, socket)
+	global promoteFlag
+	promoteFlag = 0
 
 ircsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 ircsock.connect((server, 6667))
@@ -229,9 +249,11 @@ while True:
   ## to do with each message
   if ircmsg.split(" ")[1] == "PRIVMSG":
   	msgObject = Message(ircmsg)
-  	print(msgObject.userName)
-  	print(msgObject.contents)
   	playerList = messageHandler(msgObject, playerList, ircsock)
+
+  ## Check to see if this is a NAMES list
+  if (botnick.decode() + " = " + channel.decode()) in ircmsg and promoteFlag == 1:
+  	promoteGame(ircmsg, ircsock)
 
   ## If it's a parting message, make sure the user that left wasn't
   ## in our queue to play
