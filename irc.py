@@ -2,8 +2,8 @@ import time
 import socket
 
 server = "irc.quakenet.org".encode()
-channel = "#nactftesting".encode()
-botnick = "[nactf]blehblah".encode()
+channel = "#nactf.ql".encode()
+botnick = "[nactf]".encode()
 playerList = []
 lastGameTime = None
 promoteFlag = 0
@@ -134,7 +134,7 @@ def addPlayer(message, playerList, socket):
 	else:
 		playerList.append(message.userName)
 		updateTopic(str(len(playerList)), socket)
-		if len(playerList) == 2:
+		if len(playerList) == 8:
 			createGame(playerList, socket)
 			updateTopic("0", socket)
 			return []
