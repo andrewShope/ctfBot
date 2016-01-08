@@ -2,9 +2,10 @@ import time
 import socket
 
 server = "irc.quakenet.org".encode()
-channel = "#nactf.ql".encode()
-botnick = "[nactf]".encode()
+channel = "#nactftesting".encode()
+botnick = "[nactf]blehblah".encode()
 playerList = []
+lastGameTime = None
 
 class Message(object):
 	def __init__(self, msgText):
@@ -17,6 +18,45 @@ class Message(object):
 def ping(pingID): 
 	ircsock.send(b"PONG :" + pingID.encode() +  b"\r\n")
 	print("PONG :" + pingID)
+
+def makeTimeString(seconds):
+	seconds = int(seconds)
+	originalSeconds = seconds
+	minutes, seconds = divmod(seconds, 60)
+	hours, minutes = divmod(minutes, 60)
+	days, hours = divmod(hours, 24)
+	timeString = "The last game was "
+	if days:
+		timeString += str(days)
+		if days == 1:
+			timeString += " day "
+		else:
+			timeString += " days "
+	if hours:
+		timeString += str(hours)
+		if hours == 1:
+			timeString += " hour "
+		else:
+			timeString += " hours "
+	if minutes:
+		timeString += str(minutes)
+		if minutes == 1:
+			timeString += " minute "
+		else:
+			timeString += " minutes "
+	if seconds:
+		timeString += str(seconds)
+		if seconds == 1:
+			timeString += " second "
+		else:
+			timeString += " seconds "
+
+	timeString += "ago."
+
+	if originalSeconds < 10:
+		timeString = "The game just started bruh, why are you already asking?"
+
+	return timeString
 
 def joinchan(chan): 
   ircsock.send(b"JOIN "+ chan + b"\n")
@@ -65,8 +105,19 @@ def messageHandler(message, players, socket):
 		query(message.userName, helpMessage, socket)
 		return players
 
+	if message.contents == "!l" or message.contents == "!lastgame":
+		if lastGameTime:
+			lastGame = makeTimeString(time.time() - lastGameTime)
+			say(lastGame, socket)
+		else:
+			say("No games since the last time the bot restarted.", socket)
+		return players
+	if message.contents == "HEY":
+		socket.send(b"NAMES #nactftesting\r\n")
+		return players
 	else:
 		return players
+
 
 def addPlayer(message, playerList, socket):
 	print(playerList)
@@ -78,7 +129,7 @@ def addPlayer(message, playerList, socket):
 	else:
 		playerList.append(message.userName)
 		updateTopic(str(len(playerList)), socket)
-		if len(playerList) == 8:
+		if len(playerList) == 2:
 			createGame(playerList, socket)
 			updateTopic("0", socket)
 			return []
@@ -96,6 +147,8 @@ def removePlayer(message, playerList, socket):
 
 def createGame(playerList, socket):
 	playerString = ""
+	global lastGameTime
+	lastGameTime = time.time()
 	for player in playerList:
 		playerString += player
 		playerString += " "
