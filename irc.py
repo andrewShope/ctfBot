@@ -115,11 +115,11 @@ def messageHandler(message, players, socket):
 		else:
 			say("No games since the last time the bot restarted.", socket)
 		return players
-	if message.contents == "!p" or message.contents == "!promote":
-		socket.send(b"NAMES "+ channel + b"\r\n")
-		global promoteFlag
-		promoteFlag = 1
-		return players
+	# if message.contents == "!p" or message.contents == "!promote":
+	# 	socket.send(b"NAMES "+ channel + b"\r\n")
+	# 	global promoteFlag
+	# 	promoteFlag = 1
+	# 	return players
 	else:
 		return players
 
