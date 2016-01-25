@@ -110,7 +110,7 @@ def messageHandler(message, players, socket):
  					   "Type !w or !who to see who is currently added."
  					   "Type !l or !lastgame to see when the last game was played."
  					   "Type !p or !promote to query all players to add up."
- 					   "To receive the address for the game server type !server "
+ 					   "To receive the address for the game server type !server"
  					   "and type !mumble to receive the mumble address.")
 		query(message.userName, helpMessage, socket)
 		return players
