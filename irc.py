@@ -4,6 +4,8 @@ import sys
 
 testFlag = 0
 
+# Checking to see if this is being ran as a test or not
+
 try:
 	if sys.argv[1] == "-test":
 		testFlag = 1
