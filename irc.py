@@ -1,9 +1,25 @@
 import time
 import socket
+import sys
+
+testFlag = 0
+
+try:
+	if sys.argv[1] == "-test":
+		testFlag = 1
+except IndexError:
+	pass
+
+if testFlag:
+	channel = "#nactftesting".encode()
+	botnick = "nactftest".encode()
+	maxPlayers = 2
+else:
+	channel = "#nactf.ql".encode()
+	botnick = "[nactf]".encode()
+	maxPlayers = 8
 
 server = "irc.quakenet.org".encode()
-channel = "#nactf.ql".encode()
-botnick = "[nactf]".encode()
 playerList = []
 lastGameTime = None
 promoteFlag = 0
@@ -147,7 +163,7 @@ def addPlayer(message, playerList, socket):
 	else:
 		playerList.append(message.userName)
 		updateTopic(str(len(playerList)), socket)
-		if len(playerList) == 8:
+		if len(playerList) == maxPlayers:
 			createGame(playerList, socket)
 			updateTopic("0", socket)
 			return []
