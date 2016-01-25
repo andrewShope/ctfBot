@@ -7,6 +7,7 @@ botnick = "[nactf]".encode()
 playerList = []
 lastGameTime = None
 promoteFlag = 0
+lastPlayers = []
 
 class Message(object):
 	def __init__(self, msgText):
@@ -54,6 +55,9 @@ def makeTimeString(seconds):
 
 	timeString += "ago."
 
+	if lastPlayers:
+		timeString += " Players were: " + ", ".join(lastPlayers)
+
 	if originalSeconds < 10:
 		timeString = "The game just started bruh, why are you already asking?"
 
@@ -78,6 +82,7 @@ def say(contents, socket):
  	socket.send(b"PRIVMSG " + channel + b" :" + contents.encode() + b"\n")
 
 def messageHandler(message, players, socket):
+	message.contents = message.contents.lower()
 	if message.contents == "!a" or message.contents == "!add":
 		players = addPlayer(message, players, socket)
 		return players
@@ -120,6 +125,12 @@ def messageHandler(message, players, socket):
 	# 	global promoteFlag
 	# 	promoteFlag = 1
 	# 	return players
+	if message.contents == "!server":
+		say("/connect 74.91.122.157:27961")
+		return players
+	if message.contents == "!mumble":
+		say("Mumble: vx38.commandchannel.com Port: 31282")
+		return players
 	else:
 		return players
 
@@ -151,6 +162,8 @@ def removePlayer(message, playerList, socket):
 		return playerList
 
 def createGame(playerList, socket):
+	global lastPlayers
+	lastPlayers = playerList
 	playerString = ""
 	global lastGameTime
 	lastGameTime = time.time()
