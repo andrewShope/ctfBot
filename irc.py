@@ -126,10 +126,10 @@ def messageHandler(message, players, socket):
 	# 	promoteFlag = 1
 	# 	return players
 	if message.contents == "!server":
-		say("/connect 74.91.122.157:27961")
+		say("/connect 74.91.122.157:27961", socket)
 		return players
 	if message.contents == "!mumble":
-		say("Mumble: vx38.commandchannel.com Port: 31282")
+		say("Mumble: vx38.commandchannel.com Port: 31282", socket)
 		return players
 	else:
 		return players
@@ -186,7 +186,7 @@ def updateTopic(numPlayers, socket):
 	socket.send(b"TOPIC " + channel + b" :\x02\x0304[\x0312CTF \x03\x02" +
 		b"[\x02\x0303" + numPlayers.encode() + b"\x03\x02/\x03038\x03]" +
 		b"\x02\x0304] [\x03\x02Welcome to #nactf.ql - Type !h for a list of " +
-		b"commands - 1/8/16: Added !lastgame and !promote - working on adding ratings!\x0304\x02]\x02\x03\n")
+		b"commands - 1/25/16: Added !mumble and !server\x0304\x02]\x02\x03\n")
 
 def promoteGame(message, socket):
 	outgoingMessage = "Add up! We need " + str(8-len(playerList)) + " more player(s)!"
