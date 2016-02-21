@@ -52,10 +52,10 @@ class Bot(object):
 		if msg == "!server":
 			self.IRC.say(self.serverInfo)
 
-		if msg == "!p" or msg == "!promote":
-			self.IRC.getNames()
-			self.promoteFlag = 1
-			self.promoter = message.senderNick
+		# if msg == "!p" or msg == "!promote":
+		# 	self.IRC.getNames()
+		# 	self.promoteFlag = 1
+		# 	self.promoter = message.senderNick
 
 		if msg == "!l" or msg == "!lastgame":
 			if self.game.lastGameTime:

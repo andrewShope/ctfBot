@@ -2,7 +2,7 @@ from Game import Game
 from IRC import IRC
 from Bot import Bot
 
-IRCObject = IRC(testing=True)
+IRCObject = IRC()
 gameObject = Game(IRCObject)
 pugBot = Bot(IRCObject, gameObject)
 
